@@ -12,7 +12,7 @@ I am sharing my solutions to the Advent Of Code Challenge in this repo!
 
 ## Why to do it?
 
-It is a fun experience for the holidays and allows you to find out about crazy solutions people came up with! I highly recommend trying it!
+It is a fun experience for the holidays and gives you the chance to learn about new algorithms and features of your favourite programming language. Also it's great to learn from the crazy solutions people came up with! I highly recommend giving it a try!
 
 
 
