@@ -1,5 +1,5 @@
 import numpy as np
-from heapq import heappush, heappop
+from collections import deque
 
 
 def load_heatmap(path) -> tuple[np.ndarray, tuple, tuple, tuple]:
@@ -36,19 +36,19 @@ def find_possible_movements(h: np.ndarray, cur_pos: tuple[int, int]):
 
 def find_minimal_path(h: np.ndarray, start: tuple, end: tuple) -> int:
     visited = set()
-    visit_next = []
-    heappush(visit_next, (0, start))
+    visit_next = deque()
+    visit_next.append((0, start))
 
     while len(visit_next) > 0:
-        cost, pos = heappop(visit_next)
+        cost, pos = visit_next.popleft()
+
         if pos in visited:
             continue
         if pos == end:
             return cost
-        visited.add(pos)
 
-        for neighbour in find_possible_movements(h, pos):
-            heappush(visit_next, (cost + 1, neighbour))
+        visited.add(pos)
+        visit_next.extend(((cost + 1, neighbour) for neighbour in find_possible_movements(h, pos)))
 
     return None
 
