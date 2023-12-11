@@ -18,21 +18,21 @@ int get_first_digit(Iter it, Iter end)
 
 int get_calibration_value(const std::string code)
 {
-   int v0 = get_first_digit(code.begin(), code.end());
-   int v1 = get_first_digit(code.rbegin(), code.rend());
-   return 10* v0 + v1;
+    int v0 = get_first_digit(code.begin(), code.end());
+    int v1 = get_first_digit(code.rbegin(), code.rend());
+    return 10 * v0 + v1;
 }
 
-void convert_spelled_codes(std::list<std::string>& calibration_codes)
+void convert_spelled_codes(std::list<std::string> &calibration_codes)
 {
     const std::array<std::string, 9> numbers{"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-    for (std::string& code: calibration_codes)
+    for (std::string &code : calibration_codes)
     {
-        size_t pos_beg = code.length(), pos_end=0;
-        int num_idx_beg=-1, num_idx_end=-1;
-        for (size_t idx=0; idx< numbers.size(); idx++)
+        size_t pos_beg = code.length(), pos_end = 0;
+        int num_idx_beg = -1, num_idx_end = -1;
+        for (size_t idx = 0; idx < numbers.size(); idx++)
         {
-            const std::string& number = numbers[idx];
+            const std::string &number = numbers[idx];
             size_t beg = code.find(number);
             size_t end = code.rfind(number);
             if (beg < pos_beg)
@@ -45,7 +45,6 @@ void convert_spelled_codes(std::list<std::string>& calibration_codes)
                 pos_end = end;
                 num_idx_end = idx;
             }
- 
         }
         if (num_idx_beg >= 0)
         {
@@ -72,14 +71,14 @@ int main()
 
     // Part 1
     int calibration_sum = 0;
-    for (std::string code: calibration_codes)
+    for (std::string code : calibration_codes)
         calibration_sum += get_calibration_value(code);
     std::cout << calibration_sum << std::endl;
-    
+
     // Part 2
     convert_spelled_codes(calibration_codes);
     calibration_sum = 0;
-    for (std::string code: calibration_codes)
+    for (std::string code : calibration_codes)
         calibration_sum += get_calibration_value(code);
     std::cout << calibration_sum << std::endl;
 }

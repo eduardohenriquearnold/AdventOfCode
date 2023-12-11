@@ -7,7 +7,7 @@
 
 using game_set = std::map<std::string, int>;
 
-std::istream& operator>>(std::istream& is, std::list<std::list<game_set>>& record)
+std::istream &operator>>(std::istream &is, std::list<std::list<game_set>> &record)
 {
     while (!is.eof())
     {
@@ -38,18 +38,18 @@ std::istream& operator>>(std::istream& is, std::list<std::list<game_set>>& recor
     return is;
 }
 
-int get_valid_ids_sum(const std::list<std::list<game_set>>& record)
+int get_valid_ids_sum(const std::list<std::list<game_set>> &record)
 {
     const game_set max{{"red", 12}, {"green", 13}, {"blue", 14}};
 
     int sum = 0;
     int id = 0;
-    for (const std::list<game_set>& sets: record)
+    for (const std::list<game_set> &sets : record)
     {
         id++;
         bool invalid = false;
-        for (const game_set& set: sets)
-            for (auto& item: set)
+        for (const game_set &set : sets)
+            for (auto &item : set)
                 if (item.second > max.at(item.first))
                     invalid = true;
 
@@ -59,14 +59,14 @@ int get_valid_ids_sum(const std::list<std::list<game_set>>& record)
     return sum;
 }
 
-int power_minset_cubes(const std::list<std::list<game_set>>& record)
+int power_minset_cubes(const std::list<std::list<game_set>> &record)
 {
     int sum = 0;
-    for (const std::list<game_set>& sets: record)
+    for (const std::list<game_set> &sets : record)
     {
         game_set minset{{"red", 0}, {"green", 0}, {"blue", 0}};
-        for (const game_set& set: sets)
-            for (auto& item: set)
+        for (const game_set &set : sets)
+            for (auto &item : set)
                 minset[item.first] = std::max(minset[item.first], item.second);
         sum += minset["red"] * minset["green"] * minset["blue"];
     }
@@ -81,6 +81,7 @@ int main()
 
     int valid_sum = get_valid_ids_sum(record);
     int power_sum = power_minset_cubes(record);
-    std::cout << valid_sum << std::endl << power_sum << std::endl;
+    std::cout << valid_sum << std::endl
+              << power_sum << std::endl;
     return 0;
 }

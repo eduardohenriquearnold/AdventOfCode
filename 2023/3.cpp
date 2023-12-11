@@ -10,37 +10,37 @@ using map_uv_string = std::map<coordinate, std::string>;
 
 bool is_symbol(char c)
 {
-    switch(c)
+    switch (c)
     {
-        case '!':
-        case '@':
-        case '#':
-        case '$':
-        case '%':
-        case '^':
-        case '&':
-        case '*':
-        case '(':
-        case ')':
-        case '-':
-        case '+':
-        case '=':
-        case '/':
-            return true;
+    case '!':
+    case '@':
+    case '#':
+    case '$':
+    case '%':
+    case '^':
+    case '&':
+    case '*':
+    case '(':
+    case ')':
+    case '-':
+    case '+':
+    case '=':
+    case '/':
+        return true;
 
-        default:
-            return false;
+    default:
+        return false;
     }
 }
 
-/* Load input into maps of (u, v) to string, for numbers and symbols. 
+/* Load input into maps of (u, v) to string, for numbers and symbols.
    Note: the (u, v) for numbers is the coordinate where the number starts (left-most)
 */
-void load_data(std::istream& is, map_uv_string& numbers, map_uv_string& symbols)
+void load_data(std::istream &is, map_uv_string &numbers, map_uv_string &symbols)
 {
     std::string current_num;
     std::pair<int, int> current_ij;
-    int i=0, j=0;
+    int i = 0, j = 0;
     while (!is.eof())
     {
         char c = is.get();
@@ -69,36 +69,34 @@ void load_data(std::istream& is, map_uv_string& numbers, map_uv_string& symbols)
     }
 }
 
-std::vector<coordinate> get_neighbours(const coordinate& uv, int number_length)
+std::vector<coordinate> get_neighbours(const coordinate &uv, int number_length)
 {
-    const auto& [x, y] = uv;
+    const auto &[x, y] = uv;
     const size_t num_neighbours = 2 * number_length + 6;
     std::vector<coordinate> neighbours(num_neighbours);
 
     // left and right-most neighbours
-    for (int i=0; i< 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         neighbours[i] = std::make_pair(x - 1, y + 1 - i);
         neighbours[num_neighbours - 1 - i] = std::make_pair(x + number_length, y + 1 - i);
     }
-    
+
     // up and down neighbours
-    for (int i=0; i < number_length; i++)
+    for (int i = 0; i < number_length; i++)
     {
-        neighbours[2*i+3] = std::make_pair(x+i, y+1);
-        neighbours[2*i+1+3] = std::make_pair(x+i, y-1);
+        neighbours[2 * i + 3] = std::make_pair(x + i, y + 1);
+        neighbours[2 * i + 1 + 3] = std::make_pair(x + i, y - 1);
     }
-    
+
     return neighbours;
 }
 
-
-
-int count_part_numbers(const map_uv_string& numbers, const map_uv_string& symbols)
+int count_part_numbers(const map_uv_string &numbers, const map_uv_string &symbols)
 {
     int sum = 0;
-    for (const auto& [uv, number]: numbers)
-        for (const auto& neighbour: get_neighbours(uv, number.length()))
+    for (const auto &[uv, number] : numbers)
+        for (const auto &neighbour : get_neighbours(uv, number.length()))
             if (symbols.find(neighbour) != symbols.end())
             {
                 sum += std::stoi(number);
@@ -107,12 +105,12 @@ int count_part_numbers(const map_uv_string& numbers, const map_uv_string& symbol
     return sum;
 }
 
-int get_gear_ratio_sum(const map_uv_string& numbers, const map_uv_string& symbols)
+int get_gear_ratio_sum(const map_uv_string &numbers, const map_uv_string &symbols)
 {
     std::map<coordinate, coordinate> gears;
 
-    for (const auto& [uv, number]: numbers)
-        for (const auto& neighbour: get_neighbours(uv, number.length()))
+    for (const auto &[uv, number] : numbers)
+        for (const auto &neighbour : get_neighbours(uv, number.length()))
         {
             auto it = symbols.find(neighbour);
             if (it != symbols.end())
@@ -123,9 +121,8 @@ int get_gear_ratio_sum(const map_uv_string& numbers, const map_uv_string& symbol
                         gears[it->first].second = std::stoi(number);
         }
 
-
     int sum = 0;
-    for (const auto& [uv, gear_values]: gears)
+    for (const auto &[uv, gear_values] : gears)
         sum += gear_values.first * gear_values.second;
     return sum;
 }
@@ -141,6 +138,6 @@ int main()
 
     int gear_ratio_sum = get_gear_ratio_sum(numbers, symbols);
     std::cout << gear_ratio_sum << std::endl;
-    
+
     return 0;
 }
