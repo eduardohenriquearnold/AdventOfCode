@@ -84,7 +84,14 @@ public:
         return '\0';
     }
 
-    Coordinate next(Coordinate &cur, Coordinate &dir) const
+    char& operator[](const Coordinate &c)
+    {
+        if (c.u >= 0 && c.u < map[0].size() && c.v >= 0 && c.v < map.size())
+            return map[c.v][c.u];
+        throw std::runtime_error("Coordinate out of range");
+    }
+
+    Coordinate next(const Coordinate &cur, const Coordinate &dir) const
     {
         switch ((*this)[cur])
         {
@@ -170,7 +177,6 @@ public:
     }
 
     // point is inside loop if number of crossings of a line towards infinity is odd
-    // use diagonal line to avoid colinear line with loop
     bool is_inside_loop(const std::unordered_set<Coordinate> &loop, const Coordinate &c) const
     {
         // if c is part of the boundary it is not IN the loop
@@ -181,9 +187,13 @@ public:
         Coordinate cur(c);
         while ((*this)[cur] != '\0')
         {
-            if (loop.contains(cur) && (*this)[cur] != '7' && (*this)[cur] != 'L')
+            char c = (*this)[cur];
+            // we count the vertical pipes '|' and complex pipes 'FJ' & 'L7'.
+            // 'F7' and 'LJ' cancel each other and so should not count
+            // by counting just |F7 we correctly count the FJs L7s and at same time cancel F7s and LJs
+            if (loop.contains(cur) && (c == '|' || c == 'F' || c== '7'))
                 crossings++;
-            cur += Coordinate(1, 1);
+            cur.u++;
         }
         return crossings % 2 == 1;
     }
@@ -214,6 +224,30 @@ public:
         }
         return area;
     }
+
+    // replace 'S' with the correct loop item
+    // required for part2 to work correctly
+    void fix_map_loop_start(const std::list<Coordinate> &loop)
+    {
+        Coordinate dir = loop.front() - loop.back();
+        bool succ = false;
+        for (char c: {'|', '-', 'L', 'J', '7', 'F'})
+        {
+            try {
+                (*this)[loop.front()] = c;
+                next(loop.front(), dir);
+                succ = true;
+                break;
+            }
+            catch (std::exception &e)
+            {
+                continue;
+            }
+        }
+
+        if (!succ)
+            throw std::runtime_error("Could not replace start tile");
+    }
 };
 
 std::istream &operator>>(std::istream &is, Map &map)
@@ -231,6 +265,7 @@ int main()
     is >> map;
 
     std::list<Coordinate> loop = map.find_loop();
+    map.fix_map_loop_start(loop);
     std::cout << (loop.size() / 2) << std::endl;
     std::cout << map.count_tiles_within_loop(loop) << std::endl;
     return 0;
